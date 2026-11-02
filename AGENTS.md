@@ -1,6 +1,6 @@
 # AGENTS.md — istruzioni per agenti AI
 
-Progetto: **Consortium Zero**, clone tattico isometrico in sola tecnologia web. Zero dipendenze, zero build, zero asset esterni: grafica (Canvas 2D) e audio (WebAudio) sono procedurali e originali. Testi di gioco in **italiano**.
+Progetto: **Consortium Zero**, gioco tattico isometrico in sola tecnologia web, ispirato a Syndicate di Bullfrog. Zero dipendenze, zero build, zero asset esterni: grafica (Canvas 2D) e audio (WebAudio) sono procedurali e originali. Testi di gioco in **italiano**.
 
 ## Non fare mai
 - Aggiungere librerie, framework, file di build, immagini/audio/fonti esterni.

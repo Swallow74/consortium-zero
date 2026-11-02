@@ -1,7 +1,12 @@
 # Consortium Zero
 
-Clone tattico isometrico in sola tecnologia web (HTML5 Canvas 2D + ES modules + WebAudio). Nessuna dipendenza, nessuna build, nessun asset esterno: grafica e audio sono procedurali e originali (nessun materiale di Bullfrog/EA/FreeSynd).
+Gioco tattico isometrico in sola tecnologia web, ispirato a *Syndicate* di Bullfrog (HTML5 Canvas 2D + ES modules + WebAudio). Nessuna dipendenza, nessuna build, nessun asset esterno: grafica e audio sono procedurali e originali (nessun materiale di Bullfrog/EA/FreeSynd).
 Lavori automatici (agenzie AI): iniziare da `AGENTS.md`; creazione missioni: `docs/MISSIONI_AI.md`.
+
+## Screenshot
+|Fonderie di Voltri (tema industriale, pioggia)|Porto Franco (tema tramonto)|
+|---|---|
+|![Fonderie di Voltri](screenshots/fonderie-voltri.png)|![Porto Franco](screenshots/porto-franco.png)|
 
 ## Avvio
 - Locale: `python3 serve.py` → http://localhost:8080
