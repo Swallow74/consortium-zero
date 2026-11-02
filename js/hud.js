@@ -35,7 +35,8 @@ export class Hud {
     this.tip = el('div', { class: 'hud-tip hidden' });
     this.pauseTag = el('div', { class: 'hud-pause' }, 'PAUSA TATTICA — impartisci gli ordini, Spazio per riprendere');
     this.hurtEl = el('div', { class: 'hud-hurt' });
-    r.append(this.hurtEl, this.objBox, this.topRight, this.toasts, this.agentsBox, this.miniWrap, this.flashEl, this.tip, this.pauseTag);
+    this.gloss = this.makeGlossary();
+    r.append(this.hurtEl, this.objBox, this.topRight, this.toasts, this.agentsBox, this.miniWrap, this.flashEl, this.tip, this.pauseTag, this.gloss);
     this.mctx = this.mini.getContext('2d');
     this.mini.addEventListener('mousedown', (e) => { if (e.button === 2) this.miniOrder(e); else this.miniClick(e); });
     this.mini.addEventListener('mousemove', (e) => { if (e.buttons & 1) this.miniClick(e); });
@@ -48,6 +49,29 @@ export class Hud {
       this.app.setSpeed(nextSpd);
       play('click');
     });
+  }
+
+  /** Glossario dei testi dell'interfaccia, a sinistra; si apre dal chip GLOSSARIO. */
+  makeGlossary() {
+    const rows = [
+      ['Stato', 'IN MOVIMENTO · ATTACCO · PERSUADE · SALE · FUOCO · FERMO · IN INGAGGIO · SEGUE IL GRUPPO · ARMI RINFODERATE · IN VEICOLO'],
+      ['Barra verde', 'salute dell\u2019agente nella carta'],
+      ['ADR/PER/INT', 'IPA: adrenalina, percezione, intelligenza \u2014 trascina le barre per addestrarlo'],
+      ['Armi', 'clicca una fessura per avere l\u2019arma in pugno; riclicca quella attiva per rinfoderarla (come Z)'],
+      ['POLIZIA \u2605', 'calore: 1 sospetto, 2 allerta, 3 rinforzi; "GETTA L\u2019ARMA!" \u2192 rinfodera subito o spara'],
+      ['BONUS VELOCIT\u00c0', 'premio in denaro se chiudi la missione entro i tempi'],
+      ['VELOCIT\u00c0', 'clicca il pannello: 1x \u2192 1.5x \u2192 2x \u2192 3x \u2192 0.5x; Spazio = pausa tattica'],
+      ['Obiettivi', '\u25c6 in corso \u00b7 \u2714 completato \u00b7 \u2716 fallito \u00b7 (bonus) facoltativo'],
+      ['Minimappa', 'riquadro bianco = visuale; anello giallo pulsante = obiettivo'],
+      ['F1 / H', 'lista completa dei comandi'],
+    ];
+    const body = el('div', { class: 'gl-body' }, rows.map(([k, v]) => el('div', { class: 'gl-row' }, el('b', {}, k), el('span', {}, v)))); // taste-skill-ignore
+    const head = el('button', {
+      class: 'gl-head',
+      title: 'Glossario dell\u2019interfaccia',
+      onclick: () => { this.gloss.classList.toggle('open'); play('click'); },
+    }, el('span', {}, 'GLOSSARIO'), el('i', {}, '\u25b8')); // taste-skill-ignore
+    return el('div', { class: 'hud-gloss panel' }, head, body);
   }
 
   setGame(game, renderer) {
@@ -127,11 +151,19 @@ export class Hud {
     const w = WEAPONS[a.weapons[i].id];
     if (w.type === 'medikit') { g.useMedikit(a); return; }
     if (w.type === 'bomb') { g.plantBomb(a); return; }
+    // riclick sull'arma attiva: la rimette via (equivalente al tasto Z)
+    if (!a.holstered && a.cur === i) {
+      const h = g.toggleHolster([...g.sel]);
+      if (h !== undefined) this.flash(h ? 'Armi rinfoderate' : 'Armi in pugno');
+      return;
+    }
     // applica la stessa arma a tutti i selezionati che la possiedono
+    const wasHolstered = a.holstered;
     for (const s of g.sel) {
       const idx = s.weapons.findIndex((x) => x.id === a.weapons[i].id);
-      if (idx >= 0) s.selectWeapon(idx);
+      if (idx >= 0) { s.selectWeapon(idx); s.holstered = false; }
     }
+    if (wasHolstered) this.flash('Armi in pugno');
     play('click');
   }
 
@@ -229,12 +261,13 @@ export class Hud {
         if (!w) { if (s.dataset.k !== '') { s.dataset.k = ''; s.className = 'wslot empty'; s.textContent = ''; s.title = ''; } continue; }
         const d = WEAPONS[w.id];
         const off = OFFENSIVE.has(d.type);
-        const key = w.id + (off || d.type === 'medikit' || d.type === 'bomb' ? ':' + w.ammo : '') + (a.cur === i ? '*' : '') + (w.ammo <= 0 && d.ammo ? 'x' : '');
+        const cur = a.cur === i;
+        const key = w.id + (off || d.type === 'medikit' || d.type === 'bomb' ? ':' + w.ammo : '') + (cur ? '*' : '') + (w.ammo <= 0 && d.ammo ? 'x' : '') + (a.holstered ? 'h' : '');
         if (s.dataset.k !== key) {
           s.dataset.k = key;
-          s.className = 'wslot' + (a.cur === i ? ' cur' : '') + (w.ammo <= 0 && d.ammo ? ' empty-ammo' : '') + (d.type === 'persuade' ? ' prs' : '') + (d.type === 'passive' ? ' passive' : '');
+          s.className = 'wslot' + (cur ? ' cur' : '') + (w.ammo <= 0 && d.ammo ? ' empty-ammo' : '') + (d.type === 'persuade' ? ' prs' : '') + (d.type === 'passive' ? ' passive' : '');
           s.innerHTML = `<b>${d.abbr}</b>` + (d.ammo ? `<i>${w.ammo}</i>` : '');
-          s.title = `${d.name} — ${d.desc}`;
+          s.title = `${d.name} — ${d.desc}` + (cur ? (a.holstered ? ' · clicca per riprendere in pugno' : ' · clicca di nuovo per rinfoderare') : '');
         }
       }
     }

@@ -347,6 +347,19 @@ label.opt input[type=range] { width: 250px; }
 .hud-obj em { color: var(--amber); font-style: normal; font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; }
 .hud-obj small { color: var(--muted); font-size: 11px; }
 
+/* glossario HUD: chip chiuso a sinistra, si apre a pannello */
+.hud-gloss { --cut: 10px; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 116px; max-height: 64vh; display: flex; flex-direction: column; transition: width 0.18s ease; }
+.hud-gloss.open { width: 302px; }
+.gl-head { flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: none; border: none; cursor: pointer; padding: 9px 12px 8px; font: 700 10px var(--mono); letter-spacing: 0.24em; color: var(--cyan); }
+.gl-head:hover { color: #eafcff; }
+.gl-head i { font-style: normal; font-size: 11px; color: var(--muted); transition: transform 0.18s; }
+.hud-gloss.open .gl-head i { transform: rotate(90deg); }
+.gl-body { display: none; padding: 0 12px 10px; overflow-y: auto; }
+.hud-gloss.open .gl-body { display: block; }
+.gl-row { display: grid; grid-template-columns: 88px 1fr; gap: 3px 10px; padding: 5px 0; border-top: 1px solid rgba(55, 225, 255, 0.1); align-items: baseline; }
+.gl-row b { font: 700 9.5px var(--mono); letter-spacing: 0.06em; color: var(--amber); text-transform: uppercase; }
+.gl-row span { font-size: 11px; line-height: 1.45; color: var(--muted); }
+
 .hud-top { --cut: 12px; position: absolute; top: 12px; right: 12px; padding: 10px 14px 9px; width: 250px; font-size: 12.5px; }
 .hud-top::before { content: 'SITUAZIONE'; position: static; height: auto; background: none; display: block; font: 700 10px var(--mono); letter-spacing: 0.28em; color: var(--muted); margin-bottom: 7px; } /* taste-skill-ignore */
 .tr-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 2.5px 0; }
