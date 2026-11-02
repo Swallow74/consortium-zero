@@ -111,6 +111,20 @@ export function findTarget(game, u, range, cone = false, bonus = null) {
     const s = threatScore(game, u, t, d) + (bonus ? bonus(t) : 0);
     if (s > bs) { bs = s; best = t; }
   }
+  // auto con a bordo unita' ostili: l'unica cosa visibile degli agenti imbarcati
+  // e' il veicolo, quindi i nemici prendono di mira l'auto e la crivellano
+  for (const v of game.vehicles) {
+    if (!v.alive || !game.hostile(u, v)) continue;
+    if (!v.passengers.some((p) => p.alive && game.hostile(u, p))) continue;
+    const dx = v.x - u.x, dy = v.y - u.y;
+    if (Math.abs(dx) > range || Math.abs(dy) > range) continue;
+    const d = Math.hypot(dx, dy);
+    if (d > range) continue;
+    if (cone && d > 3.2 && Math.abs(angDiff(u.dir, Math.atan2(dy, dx))) > 1.15) continue;
+    if (!game.map.los(u.x, u.y, v.x, v.y)) continue;
+    const s = threatScore(game, u, v, d) + (bonus ? bonus(v) : 0);
+    if (s > bs) { bs = s; best = v; }
+  }
   return best;
 }
 
@@ -461,8 +475,8 @@ function perceive(game, u, ai, dt) {
   if (calm) {
     // rilevamento graduale: distanza, arma in pugno, livello
     let rate = clamp(1.8 - d / sight, 0.3, 1.8) * (ai.level >= 3 ? 1.7 : ai.level === 2 ? 1.3 : 1);
-    if (!drawn(t)) rate *= 0.4;
-    if (t.moving) rate *= 1.15;
+    if (t.kind !== 'vehicle' && !drawn(t)) rate *= 0.4; // un'auto col team a bordo e' gia' una minaccia armata
+    if (t.moving || t.speed > 0.5) rate *= 1.15;
     if (d < 2.6 || (t === u.lastAttacker && game.t - u.lastHurtT < 5) || game.alarm) rate = 99;
     ai.sus += rate * iv * 1.5;
     if (ai.sus < 1) {
@@ -560,9 +574,9 @@ function npcShoot(game, u, ai, T, wi, w, dt) {
   }
   // livello 3: anticipa il movimento del bersaglio
   let tx = T.x, ty = T.y;
-  if (ai.level >= 3 && T.moving && T.path?.[T.pi]) {
+  if (ai.level >= 3 && (T.moving || T.speed > 0.5) && T.path?.[T.pi]) {
     const p = T.path[T.pi], dd = Math.hypot(p.x - T.x, p.y - T.y) || 1;
-    const lead = Math.min(0.6, dist(u, T) / 30) * T.baseSpeed;
+    const lead = Math.min(0.6, dist(u, T) / 30) * (T.baseSpeed ?? T.maxSpeed);
     tx += ((p.x - T.x) / dd) * lead; ty += ((p.y - T.y) / dd) * lead;
   }
   fire(game, u, tx, ty, wi);

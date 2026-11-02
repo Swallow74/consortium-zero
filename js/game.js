@@ -582,12 +582,20 @@ export class Game {
     let t = v.tTarget;
     if (!t || !t.alive || t.vehicle || Math.hypot(t.x - v.x, t.y - v.y) > R || !this.map.los(v.x, v.y, t.x, t.y)) {
       t = null; let bd = R;
+      const cand = (o) => {
+        // il convoglio apre il fuoco solo se in allarme o se attaccato
+        if (!this.alarm && this.heat < 50 && v.tTarget !== o) return;
+        const d = Math.hypot(o.x - v.x, o.y - v.y);
+        if (d < bd && this.map.los(v.x, v.y, o.x, o.y)) { bd = d; t = o; }
+      };
       for (const u of this.units) {
         if (!u.alive || u.vehicle || u.faction !== 0) continue;
-        const d = Math.hypot(u.x - v.x, u.y - v.y);
-        // il convoglio apre il fuoco solo se in allarme o se attaccato
-        if (!this.alarm && this.heat < 50 && !(v.tTarget === u)) continue;
-        if (d < bd && this.map.los(v.x, v.y, u.x, u.y)) { bd = d; t = u; }
+        cand(u);
+      }
+      // l'auto del giocatore con agenti a bordo e' un bersaglio legittimo
+      for (const o of this.vehicles) {
+        if (o === v || !o.alive || !o.passengers.some((p) => p.alive && p.faction === 0)) continue;
+        cand(o);
       }
       if (t && t !== v.tTarget) v.tcd = 0.7; // tempo di acquisizione
       v.tTarget = t;
@@ -618,6 +626,10 @@ export class Game {
   alertVehicleAttack(v, src) {
     if (v.hostile && src?.faction === 0) { v.tTarget = src.kind === 'vehicle' ? null : src; this.alarm = true; }
     if (v.traffic && !v.player) v.panicT = 5;
+    if (v.player && src && src.faction !== 0) {
+      // chi e' a bordo sente i colpi sull'auto: estrae le armi e si gira verso l'aggressore
+      for (const p of v.passengers) if (p.alive) { p.lastAttacker = src; p.lastHurtT = this.t; }
+    }
   }
 
   persuade(a, t) { return persuade(this, a, t); }

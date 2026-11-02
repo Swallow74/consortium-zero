@@ -1,5 +1,5 @@
 import { WEAPONS, OFFENSIVE } from './data.js';
-import { gauss, angDiff } from './util.js';
+import { gauss, angDiff, rand, TAU } from './util.js';
 import { play } from './audio.js';
 import { Pickup, mkWeapon } from './units.js';
 
@@ -206,13 +206,28 @@ export function destroyVehicle(game, v, src) {
   v.deadT = game.t;
   v.speed = 0;
   game.stats.vehiclesDestroyed++;
-  for (const p of [...v.passengers]) {
-    p.vehicle = null;
-    p.x = v.x; p.y = v.y;
-    damage(game, p, 9999, src, 'explosion');
-  }
+  const ps = [...v.passengers];
   v.passengers = [];
+  // explode() ignora le unita' ancora imbarcate (.vehicle): l'onda d'urto
+  // colpirà solo chi e' fuori, il resto lo fa il danno dell'abitacolo qui sotto
   explode(game, v.x, v.y, 2.6, 90, src, v);
+  for (const p of ps) {
+    p.vehicle = null;
+    const a = rand(0, TAU);
+    const n = game.map.nearestWalk(Math.floor(v.x + Math.cos(a) * 1.6), Math.floor(v.y + Math.sin(a) * 1.6), 4);
+    p.x = n ? n[0] + 0.5 : v.x; p.y = n ? n[1] + 0.5 : v.y;
+    if (!p.alive) continue;
+    // chi resta dentro all'esplosione incassa un danno grave, attenuato
+    // dalla corazza (torace) e dallo scudo: senza protezioni si muore,
+    // con torace 3 e scudo si esce bruciati ma vivi
+    const armor = Math.min(3, p.mods?.chest ?? 0);
+    damage(game, p, 200 * (1 - 0.16 * armor), src, 'explosion');
+    if (p.alive) {
+      p.burn = Math.max(p.burn || 0, 2);
+      p.suppress = 1;
+      if (p.faction === 3) game.scare(p, v.x, v.y);
+    }
+  }
   game.onKill?.(v, src);
 }
 
