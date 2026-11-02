@@ -1173,7 +1173,7 @@ export class Renderer {
     ctx.translate(mx, my);
     ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 1.8 * dpr; ctx.shadowColor = col; ctx.shadowBlur = 8 * dpr;
     const r = (this.cursor === 'move' ? 9 : 13) * dpr;
-    ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(r, 0); ctx.lineTo(0, r); ctx.lineTo(-r, 0); ctx.closePath(); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(-r - 5 * dpr, 0); ctx.lineTo(-r * 0.4, 0); ctx.moveTo(r + 5 * dpr, 0); ctx.lineTo(r * 0.4, 0); ctx.moveTo(0, -r - 5 * dpr); ctx.lineTo(0, -r * 0.4); ctx.moveTo(0, r + 5 * dpr); ctx.lineTo(0, r * 0.4); ctx.stroke();
     ctx.beginPath(); ctx.arc(0, 0, 1.6 * dpr, 0, TAU); ctx.fill();
     ctx.restore();

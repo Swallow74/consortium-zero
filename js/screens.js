@@ -3,6 +3,7 @@ import { WEAPONS, MODS, OFFENSIVE } from './data.js';
 import { buyWeapon, buyMod, modCost, recruit, RECRUIT_COST, equip, unequip, saveProfile, resetProfile } from './profile.js';
 import { play, setVolume, getVolume } from './audio.js';
 import { createWorldMap, BLOCS } from './worldmap.js';
+import { drawAgentPortrait } from './portrait.js';
 
 export class Screens {
   constructor(root, app) {
@@ -31,14 +32,15 @@ export class Screens {
     play('click');
   }
 
-  money() { return el('div', { class: 'money' }, fmtMoney(this.app.profile.money)); }
+  money() { return el('div', { class: 'money' }, el('small', {}, 'FONDI'), fmtMoney(this.app.profile.money)); }
 
   // ---------------------------------------------------------------- TITOLO
   title() {
     const a = this.app;
     const has = Object.keys(a.profile.completed).length > 0;
     return el('div', { class: 'title-screen' },
-      el('div', { class: 'logo' }, el('span', {}, 'CONSORTIUM'), el('em', {}, 'ZERO')),
+      el('span', { class: 'mark big' }),
+      el('h1', { class: 'logo' }, el('span', {}, 'CONSORTIUM'), el('em', {}, 'ZERO')),
       el('p', { class: 'tag' }, 'Controlla la città. Persuadi, elimina, domina.'),
       el('div', { class: 'menu' },
         el('button', { class: 'btn big', onclick: () => a.go('hub') }, has ? 'CONTINUA' : 'NUOVA CAMPAGNA'),
@@ -61,7 +63,17 @@ export class Screens {
     const showInfo = () => {
       info.innerHTML = '';
       if (!selected) {
-        info.append(el('h2', {}, 'Mappa territori'), el('p', { class: 'muted' }, ms.length ? 'Seleziona un territorio per leggere il rapporto della missione.' : 'Nessuna missione trovata. Aggiungi cartelle in /missions.'));
+        const doneN = ms.filter(done).length;
+        const liveN = p.agents.filter((x) => x.alive).length;
+        const openN = ms.filter((m) => !done(m) && avail(m)).length;
+        info.append(
+          el('h2', {}, 'Rete territoriale'),
+          el('p', { class: 'muted' }, ms.length ? 'Seleziona un territorio per leggere il rapporto della missione.' : 'Nessuna missione trovata. Aggiungi cartelle in /missions.'),
+          ms.length ? el('div', { class: 'stats' },
+            el('div', {}, el('small', {}, 'Territori'), el('b', { class: 'cyan' }, `${doneN}/${ms.length}`)),
+            el('div', {}, el('small', {}, 'Obiettivi attivi'), el('b', {}, String(openN))),
+            el('div', {}, el('small', {}, 'Agenti operativi'), el('b', { class: liveN ? 'green' : 'bad' }, String(liveN))),
+            el('div', {}, el('small', {}, 'Fondi'), el('b', { class: 'amber' }, fmtMoney(p.money)))) : null);
         return;
       }
       const m = selected, ok = avail(m), dn = done(m);
@@ -69,8 +81,8 @@ export class Screens {
         el('h2', {}, m.name),
         el('div', { class: 'meta' },
           el('span', {}, m.region?.name || ''),
-          el('span', {}, '★'.repeat(m.difficulty || 1) + '☆'.repeat(Math.max(0, 5 - (m.difficulty || 1)))),
-          el('span', { class: 'muted', style: 'margin-left:6px' }, dn ? 'CONTROLLATO' : ok ? 'OBIETTIVO' : 'BLOCCATO')),
+          el('span', { class: 'stars' }, '★'.repeat(m.difficulty || 1) + '☆'.repeat(Math.max(0, 5 - (m.difficulty || 1)))), // taste-skill-ignore
+          el('span', { class: 'tag-state ' + (dn ? 'done' : ok ? 'avail' : 'locked'), style: 'margin-left:6px' }, dn ? 'CONTROLLATO' : ok ? 'OBIETTIVO' : 'BLOCCATO')),
         el('p', {}, (m.briefing || '').split('\n')[0]),
         el('div', { class: 'kv' }, el('span', {}, 'Ricompensa'), el('b', {}, fmtMoney(m.reward || 0))),
         el('div', { class: 'kv' }, el('span', {}, 'Stato'), el('b', { class: dn ? 'ok' : ok ? '' : 'bad' }, dn ? 'COMPLETATA' : ok ? 'DISPONIBILE' : 'BLOCCATA')),
@@ -92,30 +104,42 @@ export class Screens {
       });
     }, 0);
 
+    const legend = el('div', { class: 'world-legend' },
+      ...BLOCS.map((b) => el('span', {}, el('i', { class: 'sw', style: { background: `rgb(${b.fill.join(',')})` } }), b.name)),
+      el('span', { class: 's-done' }, el('i', { class: 'dm' }), 'CONTROLLATO'),
+      el('span', { class: 's-avail' }, el('i', { class: 'dm' }), 'OBIETTIVO'),
+      el('span', { class: 's-locked' }, el('i', { class: 'dm' }), 'BLOCCATO'));
     return el('div', { class: 'hub' },
       el('header', { class: 'bar' },
-        el('div', { class: 'logo sm' }, el('span', {}, 'CONSORTIUM'), el('em', {}, 'ZERO')),
+        el('div', { class: 'logo sm' }, el('span', { class: 'mark' }), el('span', {}, 'CONSORTIUM'), el('em', {}, 'ZERO')),
         this.money(),
         el('nav', {},
           el('button', { class: 'btn', onclick: () => a.go('team', 'hub') }, 'Squadra & Armeria'),
           el('button', { class: 'btn', onclick: () => a.go('options', 'hub') }, 'Opzioni'),
           el('button', { class: 'btn', onclick: () => a.go('title') }, 'Titolo'))),
-      el('div', { class: 'hub-main' }, cv, info));
+      el('div', { class: 'hub-main' }, el('div', { class: 'worldbox' }, cv, legend), info));
   }
 
   // ---------------------------------------------------------------- BRIEFING
   briefing(m) {
     const a = this.app;
     const alive = a.profile.agents.filter((x) => x.alive).length;
+    const RISK = ['', 'Banale', 'Facile', 'Medio', 'Alto', 'Estremo'];
+    const THEME = { citta: 'Metropoli', deserto: 'Deserto', industriale: 'Distretto industriale', artico: 'Artico', tossico: 'Zona tossica', tramonto: 'Tramonto' };
+    const WEATHER = { clear: 'Sereno', rain: 'Pioggia', fog: 'Nebbia' };
+    const theme = typeof m.theme === 'string' ? m.theme : m.theme?.preset || 'citta';
+    const env = `${THEME[theme] || theme}${m.weather && WEATHER[m.weather] ? ' · ' + WEATHER[m.weather] : ''}`;
     return el('div', { class: 'briefing' },
       el('header', { class: 'bar' }, el('h1', {}, m.name), this.money()),
       el('div', { class: 'brief-main' },
         el('section', { class: 'panel' },
-          el('div', { class: 'meta' }, el('span', {}, m.region?.name || ''), el('span', {}, '★'.repeat(m.difficulty || 1))),
+          el('div', { class: 'meta' }, el('span', {}, m.region?.name || ''), el('span', { class: 'stars' }, '★'.repeat(m.difficulty || 1))), // taste-skill-ignore
           ...(m.briefing || '').split('\n').filter(Boolean).map((t) => el('p', {}, t)),
           el('h3', {}, 'Obiettivi'),
           el('ul', { class: 'objs' }, (m.objectives || []).map((o) => el('li', { class: o.optional ? 'opt' : '' }, o.text || o.type, o.optional ? el('small', {}, ` (bonus ${fmtMoney(o.bonus || 0)})`) : null))),
-          el('div', { class: 'kv' }, el('span', {}, 'Ricompensa'), el('b', {}, fmtMoney(m.reward || 0))),
+          el('div', { class: 'kv big' }, el('span', {}, 'Ricompensa'), el('b', {}, fmtMoney(m.reward || 0))),
+          el('div', { class: 'kv' }, el('span', {}, 'Rischio stimato'), el('b', {}, RISK[m.difficulty || 1] || '—')),
+          el('div', { class: 'kv' }, el('span', {}, 'Ambiente'), el('b', {}, env)),
           m.timeLimit ? el('div', { class: 'kv' }, el('span', {}, 'Limite di tempo'), el('b', {}, fmtTime(m.timeLimit))) : null,
           (m.unlocks || []).length ? el('div', { class: 'kv' }, el('span', {}, 'Sblocca'), el('b', {}, m.unlocks.map((u) => WEAPONS[u]?.name || u).join(', '))) : null),
         el('section', { class: 'panel squad' },
@@ -139,14 +163,19 @@ export class Screens {
       const ag = p.agents[this._teamIdx];
       const msg = el('div', { class: 'msg' });
       const note = (t, bad) => { msg.textContent = t; msg.className = 'msg' + (bad ? ' bad' : ' ok'); play(bad ? 'error' : 'pickup'); };
-      const tabs = el('div', { class: 'tabs' }, p.agents.map((x, i) => el('button', { class: 'tab' + (i === this._teamIdx ? ' on' : '') + (x.alive ? '' : ' dead'), onclick: () => { this._teamIdx = i; render(); } }, `${i + 1} · ${x.name}${x.alive ? '' : ' ✖'}`)));
+      const tabs = el('div', { class: 'tabs' }, p.agents.map((x, i) => el('button', { class: 'tab' + (i === this._teamIdx ? ' on' : '') + (x.alive ? '' : ' dead'), onclick: () => { this._teamIdx = i; render(); } }, `${i + 1} · ${x.name}${x.alive ? '' : ' ✖'}`))); // taste-skill-ignore
       let body;
       if (!ag.alive) {
         body = el('div', { class: 'panel' }, el('h2', {}, `${ag.name} è caduto`),
           el('p', {}, `Recluta un nuovo agente per ${fmtMoney(RECRUIT_COST)}.`),
           el('button', { class: 'btn big', onclick: () => { const r = recruit(p, this._teamIdx); if (r === 'ok') { render(); } else note('Fondi insufficienti', true); } }, 'Recluta'));
       } else {
-        const mods = el('section', { class: 'panel' }, el('h3', {}, 'Potenziamenti cibernetici'),
+        const portrait = el('canvas', { width: 64, height: 64, class: 'portrait-lg' });
+        drawAgentPortrait(portrait.getContext('2d'), ag.name);
+        const ipaAvg = Math.round((ag.ipa.a + ag.ipa.p + ag.ipa.i) / 3);
+        const head = el('div', { class: 'agent-head' }, portrait,
+          el('div', {}, el('h4', {}, ag.name), el('small', {}, `ELIMINAZIONI ${ag.kills || 0} · IPA MEDIA ${ipaAvg}%`)));
+        const mods = el('section', { class: 'panel' }, head, el('h3', {}, 'Potenziamenti cibernetici'),
           Object.entries(MODS).map(([k, d]) => {
             const lvl = ag.mods[k], c = modCost(ag, k);
             return el('div', { class: 'mod' },
