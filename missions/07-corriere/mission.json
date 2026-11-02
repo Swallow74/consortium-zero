@@ -1,0 +1,36 @@
+{
+  "name": "Il corriere del tramonto",
+  "order": 7,
+  "requires": ["06-esecuzione"],
+  "region": { "name": "Porto Franco", "x": 0.44, "y": 0.42 },
+  "difficulty": 4,
+  "reward": 42000,
+  "parTime": 420,
+  "unlocks": [],
+  "script": "mission.js",
+  "seed": 133,
+  "traffic": 12,
+  "weather": "clear",
+  "theme": "tramonto",
+  "briefing": "Quattro pacchetti, quattro recapiti: il parco a sud-ovest, la piazza, il distretto nord, l'angolo sud-est.\nAl nord c'è la Talpa della security: contattatela al recapito nord, senza spararle. Quando consegni l'ultimo pacco la corporazione capisce e chiude la città.\nIl furgone è su una strada verso sud-est: salite e sparite verso il covo a sud-ovest. Il furgone è il vostro mezzo: se esplode, esplode il piano.\nSe la Talpa muore prima del contatto, tutto il distretto vi cerca.",
+  "map": { "generate": { "seed": 133, "w": 60, "h": 60, "layout": "organico", "water": "fiume" } },
+  "start": { "anchor": "spawn" },
+  "entities": [
+    { "kind": "civilian", "count": 20, "zone": "pave" },
+    { "kind": "police", "count": 3, "zone": "pave" },
+    { "kind": "guard", "count": 3, "at": { "anchor": "plaza" }, "spread": 5, "weapons": ["uzi"], "ai": 2, "patrol": "random", "group": "scorta" },
+    { "kind": "enemy", "id": "capo", "name": "Il fattore", "ai": 3, "at": { "anchor": "plaza", "dx": 4 }, "weapons": ["longrange", "medikit"], "hp": 120 },
+    { "kind": "guard", "id": "talpa", "name": "La Talpa", "ai": 1, "at": { "anchor": "nw" }, "weapons": ["pistol"] },
+    { "kind": "vehicle", "id": "furgone", "type": "van", "at": { "random": "road", "near": { "anchor": "se" }, "radius": 26 }, "parked": true }
+  ],
+  "pickups": [
+    { "item": "medikit", "at": { "anchor": "plaza", "dx": 2 } },
+    { "item": "bomb", "at": { "anchor": "nw", "dy": 3 } }
+  ],
+  "objectives": [
+    { "type": "reach", "via": [{ "anchor": "park" }, { "anchor": "plaza" }, { "anchor": "nw" }], "at": { "anchor": "se", "dx": -3 }, "radius": 4, "text": "Consegna i 4 pacchetti ai recapiti" },
+    { "type": "kill", "target": "capo", "optional": true, "bonus": 6000, "text": "Elimina il fattore che osserva la piazza" },
+    { "type": "board", "target": "furgone", "text": "Salite sul furgone" },
+    { "type": "reach", "at": { "anchor": "sw" }, "radius": 4, "all": false, "text": "Raggiungete il covo a sud-ovest" }
+  ]
+}

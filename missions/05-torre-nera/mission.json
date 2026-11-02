@@ -1,0 +1,215 @@
+{
+  "name": "Torre Nera",
+  "order": 5,
+  "requires": [
+    "04-convoglio"
+  ],
+  "region": {
+    "name": "Zurigo Alta",
+    "x": 0.54,
+    "y": 0.22
+  },
+  "difficulty": 5,
+  "reward": 50000,
+  "parTime": 600,
+  "unlocks": [
+    "gauss"
+  ],
+  "sequential": true,
+  "script": "mission.js",
+  "policeHostile": true,
+  "traffic": 6,
+  "weather": "rain",
+  "briefing": "La Torre Nera è il quartier generale europeo della Aurex. Il presidente Kessler si è asserragliato nel complesso fortificato, protetto da cancelli a tessera, guardie scelte e agenti d'élite.\nRecupera la tessera d'accesso a sud-ovest, apri i cancelli, elimina Kessler ed esci vivo. Allertare la sicurezza farà arrivare rinforzi.",
+  "map": {
+    "ascii": [
+      "........................................................",
+      "........................................................",
+      "..XX>>>>>>>>>>>>>>>>>>>>>>XX>>>>>>>>>>>>>>>>>>>>>>>>XX..",
+      "..XX<<<<<<<<<<<<<<<<<<<<<<XX<<<<<<<<<<<<<<<<<<<<<<<<XX..",
+      "..^v55555555.33333333333..v^...FFFFFFFFFFFFFFFFFFF..^v..",
+      "..^v55555555.33333333333..v^...F+++++++++++++++++F..^v..",
+      "..^v55555555.33333333333..v^...F+333+99999999++T+F..^v..",
+      "..^v55555555.33333333333..v^...F+333+99999999++T+F..^v..",
+      "..^v55555555..............v^...F+333+9999.999++++F..^v..",
+      "..^v55555555.66666666666..v^...F+++++99999999++++F..^v..",
+      "..^v.........6.666666666..v^...G+++++99999999++++F..^v..",
+      "..^v44444444.66666666666..v^...F+++++++++++++++++F..^v..",
+      "..^v44444444.66666666666..v^...F+TT+++++++++++22+F..^v..",
+      "..^v44444444.66666666666..v^...F+T+T++++++++++22+F..^v..",
+      "..^v44444444.66666666666..v^...F+++++++++++++++++F..^v..",
+      "..^v......................v^...FFFFFFFFFGFFFFFFFFF..^v..",
+      "..^v......................v^........................^v..",
+      "..XX>>>>>>>>>>>>>>>>>>>>>>XX>>>>>>>>>>>>>>>>>>>>>>>>XX..",
+      "..XX<<<<<<<<<<<<<<<<<<<<<<XX<<<<<<<<<<<<<<<<<<<<<<<<XX..",
+      "..^v......................v^........................^v..",
+      "..^v......................v^........................^v..",
+      "..^v....444444.777777777..v^...,,,,,,,,,,,,,,,,,,,..^v..",
+      "..^v4444444444.777777777..v^...,,,,,,,,T,T,,,,,,,,..^v..",
+      "..^v4444444444.7777.7777..v^...,,,,,,,,,T,T,,,,,,,..^v..",
+      "..^v4444444444.777777777..v^...,,T,,,T,,,,,,,,,,,,..^v..",
+      "..^v4444444444............v^...,T,,,,,,,,,T,,,T,,,..^v..",
+      "..^v4444444444.,,,,,,,,,..v^...,,,,,,+++++++,,,,,,..^v..",
+      "..^v4444444444.,,,,,,,,,..v^...,,,,,,++ZZZ++,,,,,,..^v..",
+      "..^v...........,,,,,,,,,..v^...,,,,,,+++++++,,,,,,..^v..",
+      "..^v3333333333.,,,,,,,,,..v^...,,,,,,,,,,,,,,,,,,,..^v..",
+      "..^v3333333333.,,,,,,,,,..v^...,,,,,,,,,,,,,,,,,,,..^v..",
+      "..^v3333333333.,,,,,,,,,..v^...,T,,,,,,,,,,,,,,,,,..^v..",
+      "..^v3333333333.,,,,,,,,,..v^...,,,,,,,,,,,,,,,,,,T..^v..",
+      "..^v......................v^...,,,,,,,,,T,,,,,,,,,..^v..",
+      "..XX>>>>>>>>>>>>>>>>>>>>>>XX>>>>>>>>>>>>>>>>>>>>>>>>XX..",
+      "..XX<<<<<<<<<<<<<<<<<<<<<<XX<<<<<<<<<<<<<<<<<<<<<<<<XX..",
+      "........................................................",
+      "........................................................"
+    ],
+    "anchors": {
+      "spawn": [
+        5,
+        19
+      ],
+      "tower": [
+        41,
+        8
+      ],
+      "tower_door": [
+        40,
+        12
+      ],
+      "yard": [
+        40,
+        13
+      ],
+      "card": [
+        19,
+        25
+      ],
+      "park": [
+        19,
+        30
+      ],
+      "pad": [
+        40,
+        27
+      ],
+      "nw": [
+        14,
+        10
+      ]
+    }
+  },
+  "start": {
+    "anchor": "spawn"
+  },
+  "entities": [
+    {
+      "kind": "civilian",
+      "count": 14,
+      "zone": "pave"
+    },
+    {
+      "kind": "guard",
+      "count": 5,
+      "at": {
+        "anchor": "yard"
+      },
+      "spread": 4,
+      "weapons": [
+        "uzi"
+      ],
+      "patrol": "random",
+      "group": "difesa"
+    },
+    {
+      "kind": "guard",
+      "count": 3,
+      "at": {
+        "anchor": "tower_door"
+      },
+      "spread": 2,
+      "weapons": [
+        "shotgun"
+      ],
+      "group": "difesa"
+    },
+    {
+      "kind": "enemy",
+      "count": 3,
+      "at": {
+        "anchor": "tower_door"
+      },
+      "spread": 3,
+      "weapons": [
+        "uzi",
+        "medikit"
+      ],
+      "group": "difesa"
+    },
+    {
+      "kind": "guard",
+      "count": 4,
+      "at": {
+        "anchor": "pad"
+      },
+      "spread": 5,
+      "weapons": [
+        "pistol"
+      ],
+      "patrol": "random"
+    },
+    {
+      "kind": "vip",
+      "id": "boss",
+      "name": "Presidente Kessler",
+      "at": {
+        "anchor": "tower_door",
+        "dy": 1
+      },
+      "weapons": [
+        "minigun"
+      ],
+      "hp": 160,
+      "ai": 3,
+      "group": "boss"
+    }
+  ],
+  "pickups": [
+    {
+      "item": "access",
+      "at": {
+        "anchor": "card"
+      }
+    },
+    {
+      "item": "medikit",
+      "at": {
+        "anchor": "park"
+      }
+    },
+    {
+      "item": "laser",
+      "at": {
+        "anchor": "pad"
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "custom",
+      "id": "card",
+      "text": "Recupera la tessera d'accesso"
+    },
+    {
+      "type": "kill",
+      "target": "boss",
+      "text": "Elimina il presidente Kessler"
+    },
+    {
+      "type": "reach",
+      "at": {
+        "anchor": "spawn"
+      },
+      "radius": 4,
+      "text": "Estrazione"
+    }
+  ]
+}

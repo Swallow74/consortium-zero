@@ -1,0 +1,23 @@
+{
+  "name": "Nome missione",
+  "order": 99,
+  "requires": [],
+  "region": { "name": "Città", "x": 0.5, "y": 0.5 },
+  "difficulty": 1,
+  "reward": 5000,
+  "parTime": 300,
+  "unlocks": [],
+  "seed": 1,
+  "traffic": 8, "weather": "clear",
+  "briefing": "Testo del briefing. Più righe = più paragrafi.",
+  "map": { "generate": { "seed": 1, "w": 56, "h": 56, "layout": "auto" } },
+  "start": { "anchor": "spawn" },
+  "entities": [
+    { "kind": "civilian", "count": 20, "zone": "pave" },
+    { "kind": "guard", "id": "g1", "count": 2, "at": { "anchor": "plaza" }, "spread": 3, "weapons": ["pistol"], "patrol": "random" }
+  ],
+  "pickups": [],
+  "objectives": [
+    { "type": "eliminate", "faction": "corp", "text": "Elimina le guardie" }
+  ]
+}

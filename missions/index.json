@@ -1,0 +1,32 @@
+{
+  "missions": [
+    {
+      "folder": "01-primo-contratto",
+      "id": "01-primo-contratto"
+    },
+    {
+      "folder": "02-conversione",
+      "id": "02-conversione"
+    },
+    {
+      "folder": "03-epurazione",
+      "id": "03-epurazione"
+    },
+    {
+      "folder": "04-convoglio",
+      "id": "04-convoglio"
+    },
+    {
+      "folder": "05-torre-nera",
+      "id": "05-torre-nera"
+    },
+    {
+      "folder": "06-esecuzione",
+      "id": "06-esecuzione"
+    },
+    {
+      "folder": "07-corriere",
+      "id": "07-corriere"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "Esecuzione alla Fonderia",
+  "order": 6,
+  "requires": ["04-convoglio"],
+  "region": { "name": "Fonderie di Voltri", "x": 0.492, "y": 0.315 },
+  "difficulty": 4,
+  "reward": 40000,
+  "parTime": 300,
+  "unlocks": [],
+  "script": "mission.js",
+  "seed": 96,
+  "traffic": 8,
+  "weather": "rain",
+  "theme": "industriale",
+  "briefing": "La Aurex tiene l'ingegner Brenner in un deposito alla periferia sud-est. A metà strada c'è Drenko, il loro carnefice: quando gli agenti si avvicinano, va a eseguire la sentenza.\nElimina Drenko prima che raggiunga Brenner, poi converti l'ostaggio e scortalo al punto di partenza. Se Brenner muore, il contratto è fallito.",
+  "map": { "generate": { "seed": 96, "w": 58, "h": 58, "heightBias": 0.7, "layout": "distretti", "water": "none" } },
+  "start": { "anchor": "spawn" },
+  "entities": [
+    { "kind": "civilian", "count": 24, "zone": "pave" },
+    { "kind": "civilian", "id": "ostaggio", "name": "Ingegnere Brenner", "at": { "anchor": "se" }, "hp": 120, "speed": 0.9 },
+    { "kind": "enemy", "id": "drenko", "name": "Drenko", "ai": 3, "at": { "anchor": "se", "dx": -14, "dy": -10 }, "weapons": ["shotgun", "medikit"], "hp": 140 },
+    { "kind": "guard", "count": 3, "at": { "anchor": "plaza" }, "spread": 6, "weapons": ["uzi"], "patrol": "random" },
+    { "kind": "guard", "count": 4, "at": { "anchor": "center" }, "spread": 4, "weapons": ["pistol"] },
+    { "kind": "police", "count": 3, "zone": "pave" }
+  ],
+  "objectives": [
+    { "type": "escort", "target": "ostaggio", "at": { "anchor": "spawn" }, "radius": 3, "text": "Scorta Brenner al punto di partenza" },
+    { "type": "kill", "target": "drenko", "optional": true, "bonus": 8000, "text": "Elimina Drenko prima dell'esecuzione" }
+  ]
+}

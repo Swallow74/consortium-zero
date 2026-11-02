@@ -1,0 +1,30 @@
+{
+  "name": "Conversione",
+  "order": 2,
+  "requires": ["01-primo-contratto"],
+  "region": { "name": "Lagos Nuova", "x": 0.5, "y": 0.52 },
+  "difficulty": 2,
+  "reward": 14000,
+  "parTime": 360,
+  "unlocks": ["shield", "flamer"],
+  "seed": 23,
+  "traffic": 10, "weather": "rain",
+  "briefing": "La dottoressa Okafor ha sviluppato un impianto neurale che la Aurex vuole tenere segreto. Non va uccisa: va persuasa e scortata fino al punto di estrazione.\nLe guardie la sorvegliano nel parco. Serve il Persuadertron e un po' di pazienza: ogni persona convertita consuma capacità, i potenziamenti al cervello la aumentano.",
+  "map": { "generate": { "seed": 23, "w": 60, "h": 56, "park": 0.2, "layout": "organico", "water": "baia" } },
+  "start": { "anchor": "spawn" },
+  "entities": [
+    { "kind": "civilian", "count": 36, "zone": "pave" },
+    { "kind": "scientist", "id": "sci", "name": "Dott.ssa Okafor", "at": { "anchor": "park" }, "hp": 90, "speed": 2.2, "persuadable": true, "persuadeCost": 2 },
+    { "kind": "guard", "count": 4, "at": { "anchor": "park" }, "spread": 8, "weapons": ["uzi"], "patrol": "random", "group": "guardie" },
+    { "kind": "guard", "count": 3, "at": { "anchor": "center" }, "spread": 4, "weapons": ["pistol"], "group": "guardie" },
+    { "kind": "police", "count": 4, "zone": "pave" }
+  ],
+  "pickups": [
+    { "item": "uzi", "at": { "anchor": "plaza" } },
+    { "item": "medikit", "at": { "anchor": "sw" } }
+  ],
+  "objectives": [
+    { "type": "escort", "target": "sci", "at": { "anchor": "spawn" }, "radius": 4, "text": "Persuadi la dottoressa e portala all'estrazione" },
+    { "type": "eliminate", "group": "guardie", "optional": true, "bonus": 2500, "text": "Elimina tutte le guardie" }
+  ]
+}

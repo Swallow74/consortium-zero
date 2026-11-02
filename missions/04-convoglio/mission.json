@@ -1,0 +1,32 @@
+{
+  "name": "Convoglio",
+  "order": 4,
+  "requires": ["03-epurazione"],
+  "region": { "name": "Marsiglia Nord", "x": 0.47, "y": 0.3 },
+  "difficulty": 3,
+  "reward": 28000,
+  "parTime": 420,
+  "unlocks": ["laser"],
+  "seed": 52,
+  "traffic": 14, "weather": "rain",
+  "briefing": "Un blindato della Aurex pattuglia la città trasportando un case di dati. Distruggilo e recupera il case dal piazzale centrale prima che venga sigillato.\nLe armi leggere graffiano appena il blindato: serve un esplosivo (bomba, Gauss) o un lanciafiamme prolungato. Puoi anche rubare un'auto con V e investire i nemici.",
+  "map": { "generate": { "seed": 52, "w": 60, "h": 60, "layout": "distretti", "water": "none" } },
+  "start": { "anchor": "spawn" },
+  "entities": [
+    { "kind": "civilian", "count": 30, "zone": "pave" },
+    { "kind": "vehicle", "id": "conv", "type": "armored", "at": { "anchor": "nw" }, "hostile": true, "hp": 600, "route": [{ "anchor": "ne" }, { "anchor": "se" }, { "anchor": "sw" }, { "anchor": "nw" }], "group": "convoglio" },
+    { "kind": "guard", "count": 6, "at": { "anchor": "plaza" }, "spread": 5, "weapons": ["uzi"], "patrol": "random" },
+    { "kind": "guard", "count": 2, "at": { "anchor": "plaza" }, "spread": 3, "weapons": ["shotgun"] },
+    { "kind": "police", "count": 4, "zone": "pave" }
+  ],
+  "pickups": [
+    { "id": "case", "item": "dati", "label": "Case dati", "quest": true, "at": { "anchor": "plaza", "dx": 1 } },
+    { "item": "bomb", "at": { "anchor": "center" } },
+    { "item": "medikit", "at": { "anchor": "park" } }
+  ],
+  "objectives": [
+    { "type": "destroy", "target": "conv", "text": "Distruggi il blindato" },
+    { "type": "retrieve", "item": "case", "text": "Recupera il case dati" },
+    { "type": "reach", "at": { "anchor": "spawn" }, "radius": 4, "text": "Estrazione" }
+  ]
+}

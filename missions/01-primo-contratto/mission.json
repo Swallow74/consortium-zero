@@ -1,0 +1,30 @@
+{
+  "name": "Primo contratto",
+  "order": 1,
+  "region": { "name": "Neo Milano", "x": 0.5, "y": 0.24 },
+  "difficulty": 1,
+  "reward": 9000,
+  "parTime": 300,
+  "unlocks": ["longrange", "bomb"],
+  "seed": 11,
+  "traffic": 8, "weather": "clear",
+  "briefing": "Il direttore Marchetti, a capo della divisione sicurezza della Aurex Corp, ha rifiutato di cedere i suoi codici al Sindacato.\nSi trova nella piazza centrale con una piccola scorta. Elimina il bersaglio, evita il fuoco incrociato con i civili e torna al punto di estrazione.\nSuggerimento: il Persuadertron converte civili e guardie. Usa la barra ADR/PER/INT per potenziare i tuoi agenti.",
+  "map": { "generate": { "seed": 11, "w": 56, "h": 56, "layout": "grid", "water": "none" } },
+  "start": { "anchor": "spawn" },
+  "entities": [
+    { "kind": "civilian", "count": 30, "zone": "pave" },
+    { "kind": "vip", "id": "target", "name": "Direttore Marchetti", "at": { "anchor": "plaza" }, "weapons": ["pistol"], "hp": 80, "group": "vip" },
+    { "kind": "guard", "count": 4, "at": { "anchor": "plaza" }, "spread": 4, "weapon": "pistol", "patrol": "random", "group": "scorta" },
+    { "kind": "police", "count": 3, "zone": "pave" }
+  ],
+  "pickups": [
+    { "item": "shotgun", "at": { "anchor": "park" } },
+    { "item": "medikit", "at": { "anchor": "center" } }
+  ],
+  "objectives": [
+    { "type": "kill", "target": "target", "text": "Elimina il direttore Marchetti" },
+    { "type": "eliminate", "group": "scorta", "optional": true, "bonus": 1500, "text": "Elimina la scorta" },
+    { "type": "reach", "at": { "anchor": "spawn" }, "radius": 4, "text": "Raggiungi l'estrazione" }
+  ],
+  "sequential": false
+}

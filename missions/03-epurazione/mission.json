@@ -1,0 +1,31 @@
+{
+  "name": "Epurazione",
+  "order": 3,
+  "requires": ["02-conversione"],
+  "region": { "name": "Nuova Osaka", "x": 0.82, "y": 0.34 },
+  "difficulty": 3,
+  "reward": 22000,
+  "parTime": 480,
+  "timeLimit": 900,
+  "unlocks": ["minigun", "access"],
+  "seed": 37,
+  "traffic": 6, "weather": "fog",
+  "briefing": "Un sindacato rivale ha infiltrato sei agenti potenziati nel distretto di Nuova Osaka. Sono rapidi, lavorano in squadra, cercano riparo e si curano sotto il fuoco.\nNon dar loro il tempo di aggirarti: usa i muri per spezzare la linea di tiro e concentra il fuoco. Tempo massimo: 15 minuti.",
+  "map": { "generate": { "seed": 37, "w": 64, "h": 60, "heightBias": 1.2, "layout": "radiale", "water": "none" } },
+  "start": { "anchor": "spawn" },
+  "entities": [
+    { "kind": "civilian", "count": 34, "zone": "pave" },
+    { "kind": "enemy", "count": 2, "at": { "anchor": "center" }, "spread": 5, "weapons": ["uzi", "medikit"], "patrol": "random", "group": "rivali" },
+    { "kind": "enemy", "count": 2, "at": { "anchor": "ne" }, "spread": 5, "weapons": ["shotgun", "medikit"], "patrol": "random", "group": "rivali" },
+    { "kind": "enemy", "count": 2, "at": { "anchor": "se" }, "spread": 5, "weapons": ["pistol", "medikit"], "patrol": "random", "group": "rivali" },
+    { "kind": "guard", "count": 4, "zone": "pave", "weapon": "uzi" },
+    { "kind": "police", "count": 4, "zone": "pave" }
+  ],
+  "pickups": [
+    { "item": "minigun", "at": { "anchor": "plaza" } },
+    { "item": "medikit", "count": 1, "at": { "anchor": "nw" } }
+  ],
+  "objectives": [
+    { "type": "eliminate", "group": "rivali", "text": "Elimina gli agenti rivali" }
+  ]
+}
