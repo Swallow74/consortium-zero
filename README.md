@@ -4,9 +4,13 @@ Gioco tattico isometrico in sola tecnologia web, ispirato a *Syndicate* di Bullf
 Lavori automatici (agenzie AI): iniziare da `AGENTS.md`; creazione missioni: `docs/MISSIONI_AI.md`.
 
 ## Screenshot
-|Fonderie di Voltri (tema industriale, pioggia)|Porto Franco (tema tramonto)|
+Ogni zona ha una sua mappa: layout generati diversi (`grid`, `distretti`, `radiale`, `organico`, con fiumi/baie dove previsto) o ASCII disegnate a mano, più tema grafico e meteo propri.
+
+|Fonderie di Voltri — layout distretti (supra-blocchi, viali diagonali), tema industriale, pioggia|Porto Franco — layout organico con fiume, tema tramonto|
 |---|---|
 |![Fonderie di Voltri](screenshots/fonderie-voltri.png)|![Porto Franco](screenshots/porto-franco.png)|
+|Nuova Osaka — layout radiale, tema neon città, nebbia|Zurigo Alta (Torre Nera) — mappa ASCII disegnata a mano|
+|![Nuova Osaka](screenshots/nuova-osaka.png)|![Zurigo Alta](screenshots/zurigo-alta.png)|
 
 ## Avvio
 - Locale: `python3 serve.py` → http://localhost:8080
